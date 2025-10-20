@@ -17,8 +17,50 @@ yarn-error.log*
 *.pid.lock
 
 # Environment & config
+# Environment & config
 .env
 .env.*
+.DS_Store
+
+# IDEs & editors
+.vscode/
+.idea/
+*.swp
+
+# Coverage & temporary files
+coverage/
+dist/
+tmp/
+out/
+*.tmp
+*.bak
+
+# OS generated files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Optional Playwright test artifacts
+*.trace.zip
+*.trace
+*.zip
+
+# Local artifacts / assets cache (optional)
+tests/assets/downloads/
+tests/assets/uploads/
+
+# (Optional) package managers & build tools
+.pnp.*
+.yarn/*
+!.yarn/patches/
+!.yarn/plugins/
+!.yarn/releases/
+!.yarn/sdks/
+!.yarn/versions/
+
+# Vite/Vitepress/Docusaurus caches (harmless to keep ignored)
+.vitepress/cache
+.docusaurus/
 .DS_Store
 
 # IDEs & editors
