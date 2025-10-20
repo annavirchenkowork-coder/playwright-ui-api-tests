@@ -1,0 +1,20 @@
+{
+  "name": "playwright-automation",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "tests": "npx playwright test",
+    "test:specific": "npx playwright test --grep '1'",
+    "test:tag": "npx playwright test --grep @fixture",
+    "report": "npx playwright test:report",
+    "pretest": "npx playwright install"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.55.0",
+    "@types/node": "^24.3.1"
+  }
+}
