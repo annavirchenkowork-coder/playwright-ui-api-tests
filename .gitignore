@@ -1,0 +1,49 @@
+# Node dependencies
+node_modules/
+
+# Playwright reports & artifacts
+playwright-report/
+test-results/
+blob-report/
+playwright/.cache/
+
+# Logs & debug
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.pid
+*.seed
+*.pid.lock
+
+# Environment & config
+.env
+.env.*
+.DS_Store
+
+# IDEs & editors
+.vscode/
+.idea/
+*.swp
+
+# Coverage & temporary files
+coverage/
+dist/
+tmp/
+out/
+*.tmp
+*.bak
+
+# OS generated files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Optional Playwright test artifacts
+*.trace.zip
+*.trace
+*.zip
+
+# Local artifacts / assets cache (optional)
+tests/assets/downloads/
+tests/assets/uploads/
