@@ -1,50 +1,41 @@
-import { test } from "@playwright/test";
+import { test, expect } from "@playwright/test";
 
-test.describe("@advanced TestGroup", () => {
-  //navigate to the "https://practice.cydeo.com/javascript_alerts" page
+/**
+ * Scope: Native JS dialogs handling
+ * Proves: accept/dismiss/prompt flows and page state updates
+ * Site: https://practice.cydeo.com/javascript_alerts
+ * Tags: @advanced
+ */
+test.describe("@advanced JavaScript alerts", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("https://practice.cydeo.com/javascript_alerts");
   });
 
-  //test cases for JavaScript Alerts
-  test("@advanced Regular Alert", async ({ page }) => {
-    page.on("dialog", async (alert) => {
-      console.log(`Alert Text:: ${alert.message()}`);
-      await page.waitForTimeout(1000);
-      await alert.accept();
-    });
-
-    let clickForJSAlertButton = page.locator("//button[@onclick='jsAlert()']");
-    await clickForJSAlertButton.click();
-
-    await page.waitForTimeout(1000);
+  test("accepts regular alert and verifies result message", async ({
+    page,
+  }) => {
+    page.once("dialog", (d) => d.accept());
+    await page.getByRole("button", { name: "Click for JS Alert" }).click();
+    await expect(page.locator("#result")).toHaveText(
+      "You successfully clicked an alert"
+    );
   });
 
-  test("@advanced Confirmation Alert", async ({ page }) => {
-    page.on("dialog", async (alert) => {
-      console.log(`Alert Text:: ${alert.message()}`);
-      await page.waitForTimeout(1000);
-      await alert.dismiss();
-    });
-
-    let clickForJSConfirmAlertButton = page.locator(
-      "//button[contains(text(), 'JS Confirm')]"
-    );
-    await clickForJSConfirmAlertButton.click();
-    await page.waitForTimeout(1000);
+  test("dismisses confirmation and verifies result message", async ({
+    page,
+  }) => {
+    page.once("dialog", (d) => d.dismiss());
+    await page.getByRole("button", { name: "Click for JS Confirm" }).click();
+    await expect(page.locator("#result")).toHaveText("You clicked: Cancel");
   });
 
-  test("@advanced Prompt Alert", async ({ page }) => {
-    page.on("dialog", async (alert) => {
-      console.log(`Alert Text:: ${alert.message()}`);
-      await page.waitForTimeout(1000);
-      await alert.accept("Prompt Input");
-    });
-
-    let ckickForJSPromptAlertButton = page.locator(
-      "//button[@onclick='jsPrompt()']"
+  test("accepts prompt with input and verifies result message", async ({
+    page,
+  }) => {
+    page.once("dialog", (d) => d.accept("Prompt Input"));
+    await page.getByRole("button", { name: "Click for JS Prompt" }).click();
+    await expect(page.locator("#result")).toHaveText(
+      "You entered: Prompt Input"
     );
-    await ckickForJSPromptAlertButton.click();
-    await page.waitForTimeout(1000);
   });
 });
