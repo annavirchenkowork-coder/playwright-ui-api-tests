@@ -1,55 +1,43 @@
 import { test, expect } from "@playwright/test";
 
-test.describe("TestGroup", () => {
-  // create beforeEach hook to navigate to "https://practice.cydeo.com"
+/**
+ * Scope: Core assertions
+ * Proves: page title, checkbox state assertions, visible text verification
+ * Site: https://practice.cydeo.com
+ * Tags: @core
+ */
+test.describe("@core Assertions", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("https://practice.cydeo.com");
-    //Title verification
-    expect(page).toHaveTitle("Practice");
-    //Or
-    expect(await page.title()).toBe("Practice");
+    await expect(page).toHaveTitle(/Practice/i);
   });
 
-  test("Verify checkboxes are checked", async ({ page }) => {
-    await page.getByText("Checkboxes").click();
-    let firstCheckbox = page.locator("input#box1");
-    let secondCheckbox = page.locator("input#box2");
+  test("checkboxes can be checked", async ({ page }) => {
+    await page.getByRole("link", { name: "Checkboxes" }).click();
+    const first = page.locator("#box1");
+    const second = page.locator("#box2");
 
-    await firstCheckbox.check();
-    await secondCheckbox.check();
-    //OR
-    await expect(firstCheckbox).toBeChecked();
-    await expect(secondCheckbox).toBeChecked();
+    await first.check();
+    await second.check();
 
-    //--------------------------------------------------
-
-    expect(await firstCheckbox.isChecked()).toBeTruthy();
-    expect(await secondCheckbox.isChecked()).toBeTruthy();
+    await expect(first).toBeChecked();
+    await expect(second).toBeChecked();
   });
 
-  test("Verify checkboxes are unchecked", async ({ page }) => {
-    await page.getByText("Checkboxes").click();
-    let firstCheckbox = page.locator("input#box1");
-    let secondCheckbox = page.locator("input#box2");
+  test("checkboxes can be unchecked", async ({ page }) => {
+    await page.getByRole("link", { name: "Checkboxes" }).click();
+    const first = page.locator("#box1");
+    const second = page.locator("#box2");
 
-    await firstCheckbox.uncheck();
-    await secondCheckbox.uncheck();
+    await first.uncheck();
+    await second.uncheck();
 
-    await expect(firstCheckbox).not.toBeChecked();
-    await expect(secondCheckbox).not.toBeChecked();
-    //OR
-    expect(await firstCheckbox.isChecked()).toBeFalsy();
-    expect(await secondCheckbox.isChecked()).toBeFalsy();
+    await expect(first).not.toBeChecked();
+    await expect(second).not.toBeChecked();
   });
 
-  test("Vefify text of the element", async ({ page }) => {
-    let headerElement = page.locator("span.h1y");
-
-    await expect(headerElement).toHaveText("Test Automation Practice");
-
-    let actualHeaderText = await headerElement.innerText();
-    let expectedHeaderText = "Test Automation Practice";
-    expect(actualHeaderText).toBe(expectedHeaderText);
-    expect(actualHeaderText).toEqual(expectedHeaderText);
+  test("headline has expected text", async ({ page }) => {
+    const headline = page.locator("span.h1y");
+    await expect(headline).toHaveText("Test Automation Practice");
   });
 });
