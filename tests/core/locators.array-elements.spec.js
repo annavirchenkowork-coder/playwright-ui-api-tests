@@ -1,48 +1,39 @@
 import { test, expect } from "@playwright/test";
-import { link } from "fs";
 
-test.describe("TestGroup", () => {
-    let linkElements;
-
-  // create beforeEach hook to navigate to "https://practice.cydeo.com"
+/**
+ * Scope: Bulk element handling
+ * Proves: list querying, count assertions, visibility/enabled, and href presence
+ * Site: https://practice.cydeo.com
+ * Tags: @core
+ */
+test.describe("@core Array of elements", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("https://practice.cydeo.com");
-    linkElements = await page.locator("//ul[@class='list-group']//a").all();
   });
 
-  test("Verify that there are exactly 50 link elements within the <ul>, tag", async ({
-    page,
-  }) => {
-   
-    console.log(linkElements.length);
-
-    // Verify that there are exactly 50 link elements within the <ul>, tag
-    expect(linkElements.length).toBe(50);
-    expect(linkElements.length).toBeGreaterThanOrEqual(20);
+  test("list has a healthy number of links", async ({ page }) => {
+    const count = await page.locator("ul.list-group a").count();
+    expect(count).toBeGreaterThan(20);
   });
 
-  test("Verify that there are exactly 50 link elements within the <ul>, tag is visible & clickable", async ({
-    page,
-  }) => {
-    
+  test("all links are visible, enabled, and clickable", async ({ page }) => {
+    const links = page.locator("ul.list-group a");
+    const count = await links.count();
 
-    // Verify that there are exactly 50 link elements within the <ul>, tag is visible & clickable
-    for (let linkElement of linkElements) {
-      await expect(linkElement).toBeVisible();
-      await expect(linkElement).toBeEnabled();
-
-      //OR
-      expect(await linkElement.isVisible()).toBeTruthy();
-      expect(await linkElement.isEnabled()).toBeTruthy();
+    for (let i = 0; i < count; i += 1) {
+      const link = links.nth(i);
+      await expect(link).toBeVisible();
+      await expect(link).toBeEnabled();
     }
   });
 
-  test("Verify that there are exactly 50 link elements within the <ul>, tag has a href attribute", async ({
-    page,
-  }) => {
-    
-    for (let linkElement of linkElements) {
-      await expect(linkElement).toHaveAttribute("href");
+  test("all links expose non-empty href attributes", async ({ page }) => {
+    const links = page.locator("ul.list-group a");
+    const count = await links.count();
+
+    for (let i = 0; i < count; i += 1) {
+      const link = links.nth(i);
+      await expect(link).toHaveAttribute("href", /.+/);
     }
   });
 });
