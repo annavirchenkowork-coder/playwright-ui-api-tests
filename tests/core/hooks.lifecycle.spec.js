@@ -1,25 +1,36 @@
-import { test } from "@playwright/test";
+import { test, expect } from "@playwright/test";
 
-test.describe("FirstGroup", () => {
+/**
+ * Scope: Test lifecycle patterns
+ * Proves: beforeAll/bootstrap, beforeEach per-test setup, serial order when required
+ * Tags: @core @pattern
+ */
+test.describe.serial("@core Lifecycle patterns (serial demo)", () => {
+  let bootstrapped;
+  let perTestCount = 0;
+
   test.beforeAll(async () => {
-    console.log("Before all tests");
+    // Shared bootstrap for the suite (e.g., seed data, auth tokens in real projects)
+    bootstrapped = { ready: true };
   });
 
-  test.afterAll(async () => {
-    console.log("After all tests");
+  test.beforeEach(async () => {
+    // Per-test lightweight setup
+    perTestCount += 1;
   });
 
-  test.beforeEach(async ({ page }) => {
-    console.log("Before each test");
+  test("step A sees bootstrapped state", async () => {
+    expect(bootstrapped.ready).toBe(true);
+    expect(perTestCount).toBe(1);
   });
 
-  test("Test 1", async ({ page }) => {
-    console.log("Testing Test 1");
+  test("step B runs after A and increments counter", async () => {
+    expect(bootstrapped.ready).toBe(true);
+    expect(perTestCount).toBe(2);
   });
-  test("Test 2", async ({ page }) => {
-    console.log("Testing Test 2");
-  });
-  test("Test 3", async ({ page }) => {
-    console.log("Testing Test 3");
+
+  test("step C confirms deterministic order in serial suites", async () => {
+    expect(bootstrapped.ready).toBe(true);
+    expect(perTestCount).toBe(3);
   });
 });
