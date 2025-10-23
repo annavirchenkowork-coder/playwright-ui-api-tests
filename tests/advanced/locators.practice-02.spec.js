@@ -1,46 +1,37 @@
-import { test } from "@playwright/test";
+import { test, expect } from "@playwright/test";
 
-test.describe("@advanced TestGroup", () => {
-  //create beforeEach hook to navigate to "https://practice.cydeo.com"
+/**
+ * Scope: Form controls (checkbox, radio/select)
+ * Proves: reliable state toggling & value selection with assertions
+ * Site: https://practice.cydeo.com
+ * Tags: @advanced
+ */
+test.describe("@advanced Locator practice 02", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("https://practice.cydeo.com");
   });
-  test("Check(): checks the radio button and check boxes if they haven't been checked yet", async ({
-    page,
-  }) => {
-    //let checkboxesLink = page.locator("text=Checkboxes");
-    let checkboxesLink = page.getByText("Checkboxes");
-    await checkboxesLink.click();
 
-    //await new Promise((resolve) => setTimeout(resolve, 2000));
+  test("check(): selects an unchecked checkbox", async ({ page }) => {
+    await page.getByRole("link", { name: "Checkboxes" }).click();
 
-    let checkbox1 = page.locator("#box1");
+    const checkbox1 = page.locator("#box1");
     await checkbox1.check();
-    //await new Promise((resolve) => setTimeout(resolve, 2000));
+    await expect(checkbox1).toBeChecked();
   });
 
-  test("Uncheck(): checks the radio button and check boxes if they haven't been checked yet", async ({
-    page,
-  }) => {
-    let checkboxesLink = page.getByText("Checkboxes");
-    await checkboxesLink.click();
+  test("uncheck(): clears a checked checkbox", async ({ page }) => {
+    await page.getByRole("link", { name: "Checkboxes" }).click();
 
-    let checkbox2 = page.locator("#box2");
-    //await new Promise((resolve) => setTimeout(resolve, 2000));
+    const checkbox2 = page.locator("#box2");
     await checkbox2.uncheck();
-    //await new Promise((resolve) => setTimeout(resolve, 2000));
+    await expect(checkbox2).not.toBeChecked();
   });
 
-  test("SelectOpiton(): used for dropdowns boxes with select", async ({
-    page,
-  }) => {
-    let dropdownsLink = page.getByText("Dropdown");
-    await dropdownsLink.click();
-    //await new Promise((resolve) => setTimeout(resolve, 2000));
-    let simpleDropdown = page.locator("//select[@id='dropdown']");
-    //await simpleDropdown.selectOption("2"); //select by the value
-    //await simpleDropdown.selectOption({ label: "Option 1" }); // select by the text content
-    await simpleDropdown.selectOption({ index: 1 }); // select by the index
-    //await new Promise((resolve) => setTimeout(resolve, 2000));
+  test("selectOption(): chooses value from <select>", async ({ page }) => {
+    await page.getByRole("link", { name: "Dropdown" }).click();
+
+    const simple = page.locator("select#dropdown");
+    await simple.selectOption({ index: 1 }); // Option 1
+    await expect(simple).toHaveValue("1"); // assert selected value
   });
 });
