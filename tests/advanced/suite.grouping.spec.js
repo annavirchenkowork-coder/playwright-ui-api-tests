@@ -1,9 +1,25 @@
-import { test } from "@playwright/test";
+import { test, expect } from "@playwright/test";
 
-test.describe("@advanced TestGroup", () => {
-  test("A", async ({ page }) => {});
+/**
+ * Scope: Suite organization patterns
+ * Proves: tags, grouped setup, and serial execution for stateful flows
+ * Tags: @advanced @pattern
+ */
+test.describe.serial("@advanced Suite grouping (serial demo)", () => {
+  let sharedCounter = 0;
 
-  test("B", async ({ page }) => {});
+  test.beforeAll(async () => {
+    // shared bootstrapping for the block
+    sharedCounter = 1;
+  });
 
-  test("C", async ({ page }) => {});
+  test("@pattern step A increments shared state", async () => {
+    sharedCounter += 1;
+    expect(sharedCounter).toBe(2);
+  });
+
+  test("@pattern step B validates state carried across tests", async () => {
+    // because describe.serial, order and shared state are deterministic
+    expect(sharedCounter).toBe(2);
+  });
 });

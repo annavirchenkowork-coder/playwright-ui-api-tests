@@ -1,34 +1,42 @@
-import { test } from "@playwright/test";
+import { test, expect } from "@playwright/test";
 
-test.describe("@advanced TestGroup", () => {
-  // create beforeEach hook to navigate to "https://practice.cydeo.com"
+/**
+ * Scope: Locators fundamentals with business-like assertions
+ * Proves: extracting text, reading input values, and attribute inspection
+ * Site: https://practice.cydeo.com
+ * Tags: @advanced
+ */
+test.describe("@advanced Locator practice 01", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("https://practice.cydeo.com");
   });
 
-  test("innerText(): retrives the visible text", async ({ page }) => {
-    let headerElement = page.locator("//span[@class='h1y']");
-    let actualHeaderText = await headerElement.innerText();
-    console.log(actualHeaderText);
-  });
-
-  test("inputValue(): only works with <input>, <textarea>, <select>, retrives the input value", async ({
+  test("innerText(): verify page headline is visible to the user", async ({
     page,
   }) => {
-    let inputLink = page.getByText("Inputs");
-    await inputLink.click();
-
-    let inputBox = page.locator("//input[@type='number']");
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    await inputBox.fill("123");
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    let inputBoxValue = await inputBox.inputValue();
-    console.log(inputBoxValue);
+    // Using a robust selector; portfolio-friendly assertion rather than console output.
+    const headline = page.getByRole("heading").first();
+    await expect(headline).toBeVisible();
+    await expect(headline).toContainText(/Practice|Cydeo/i);
   });
 
-  test("getAttribute(): it retrives the attribute value", async ({ page }) => {
-    let abTestingLink = page.locator("text='A/B Testing'");
-    let hrefLink = await abTestingLink.getAttribute("href");
-    console.log(hrefLink);
+  test("inputValue(): fills numeric input and validates persisted value", async ({
+    page,
+  }) => {
+    await page.getByRole("link", { name: "Inputs" }).click();
+
+    const numberInput = page.locator('input[type="number"]');
+    await numberInput.fill("123");
+    await expect(numberInput).toHaveValue("123");
+  });
+
+  test("getAttribute(): verifies A/B Testing link target path", async ({
+    page,
+  }) => {
+    const abLink = page.getByRole("link", { name: "A/B Testing" });
+    await expect(abLink).toBeVisible();
+    const href = await abLink.getAttribute("href");
+    // Expect relative link to contain target path; keeps test stable across domains.
+    expect(href).toContain("/abtest");
   });
 });
