@@ -1,33 +1,34 @@
-import { test } from "@playwright/test";
-import { resolve } from "path";
+import { test, expect } from "@playwright/test";
 
-test("@advanced Bypass authentication by embedding the credentials in the URL", async ({
+/**
+ * Scope: Basic authentication strategies
+ * Proves: header-based and context-level auth; documents why URL-embedded auth is discouraged
+ * Site: https://practice.cydeo.com/basic_auth
+ * Tags: @advanced @auth
+ */
+
+// FYI: URL-embedded credentials are deprecated/blocked by many browsers.
+// Keeping as skipped to document awareness; unskip only for safe internal environments.
+test.skip("@advanced URL-embedded credentials (discouraged)", async ({
   page,
 }) => {
-  //First way of passing an authentication - provide credentials in side the URL:
-  // https://username:password@domain.com
   await page.goto("https://admin:admin@practice.cydeo.com/basic_auth");
-  await new Promise((resolve) => setTimeout(resolve, 2000));
+  await expect(page.locator("text=Congratulations!")).toBeVisible();
 });
 
-test("@advanced Bypass authentication by encoding the credentials base64 format", async ({
-  page,
-}) => {
-  let encodedCredentials = Buffer.from("admin:admin").toString("base64");
-  await page.setExtraHTTPHeaders({
-    Authorization: `Basic ${encodedCredentials}`,
-  });
+test("@advanced header-based basic auth via base64", async ({ page }) => {
+  const encoded = Buffer.from("admin:admin").toString("base64");
+  await page.setExtraHTTPHeaders({ Authorization: `Basic ${encoded}` });
   await page.goto("https://practice.cydeo.com/basic_auth");
-  await new Promise((resolve) => setTimeout(resolve, 2000));
+  await expect(page.locator("text=Congratulations!")).toBeVisible();
 });
 
-//inside a test (use the browser fixture):
-test("@advanced Bypass auth using httpCredentials", async ({ browser }) => {
+test("@advanced httpCredentials at browser context", async ({ browser }) => {
   const context = await browser.newContext({
     httpCredentials: { username: "admin", password: "admin" },
   });
   const page = await context.newPage();
   await page.goto("https://practice.cydeo.com/basic_auth");
-  await page.waitForTimeout(2000);
+  await expect(page.locator("text=Congratulations!")).toBeVisible();
   await context.close();
 });
